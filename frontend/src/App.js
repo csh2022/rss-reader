@@ -3,6 +3,9 @@ import './App.css';
 import React, { useState, useEffect, useRef } from 'react'; // Add useEffect import
 import axios from 'axios';
 
+// 在文件顶部添加常量
+const API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:5050`; // 保持端口 5050
+
 function App() {
   const [rssList, setRssList] = useState([]);
   const [newRssUrl, setNewRssUrl] = useState('');
@@ -35,13 +38,13 @@ function App() {
     setLoading(true);
     try {
       // 先验证RSS源是否有效
-      const validationResponse = await axios.get(`http://localhost:5050/rss?url=${encodeURIComponent(newRssUrl)}`);
+      const validationResponse = await axios.get(`${API_BASE_URL}/rss?url=${encodeURIComponent(newRssUrl)}`);
       if (validationResponse.status !== 200) {
         throw new Error('无效的RSS源');
       }
 
       // 如果验证通过，再添加RSS源
-      const addResponse = await axios.post('http://localhost:5050/rss/add', JSON.stringify(newRssUrl), {
+      const addResponse = await axios.post(`${API_BASE_URL}/rss/add`, JSON.stringify(newRssUrl), {
         headers: {
           'Content-Type': 'application/json'
         },
@@ -75,7 +78,7 @@ function App() {
   const fetchRssList = async () => {
     setIsLoading(true); // 显示加载中
     try {
-      const response = await axios.get(`http://localhost:5050/rss/list?t=${Date.now()}`, {
+      const response = await axios.get(`${API_BASE_URL}/rss/list?t=${Date.now()}`, {
         withCredentials: true
       });
       setRssList(response.data);
@@ -84,7 +87,7 @@ function App() {
       const titles = {};
       await Promise.all(response.data.map(async (url) => {
         try {
-          const feedResponse = await axios.get(`http://localhost:5050/rss?url=${encodeURIComponent(url)}`);
+          const feedResponse = await axios.get(`${API_BASE_URL}/rss?url=${encodeURIComponent(url)}`);
           titles[url] = feedResponse.data.title;
         } catch (error) {
           console.error('获取 RSS 标题失败:', error);
@@ -107,7 +110,7 @@ function App() {
 
   const removeRss = async (url) => {
     try {
-      await axios.delete(`http://localhost:5050/rss/remove?url=${encodeURIComponent(url)}`);
+      await axios.delete(`${API_BASE_URL}/rss/remove?url=${encodeURIComponent(url)}`);
 
       // 将删除的项添加到 deletedItems 数组
       setDeletedItems(prev => [url, ...prev]);
@@ -138,7 +141,7 @@ function App() {
 
     const urlToRestore = deletedItems[0];
     try {
-      await axios.post('http://localhost:5050/rss/add', JSON.stringify(urlToRestore), {
+      await axios.post(`${API_BASE_URL}/rss/add`, JSON.stringify(urlToRestore), {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -172,7 +175,7 @@ function App() {
     setSelectedRss(url);
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:5050/rss?url=${encodeURIComponent(url)}`);
+      const response = await axios.get(`${API_BASE_URL}/rss?url=${encodeURIComponent(url)}`);
       const feedData = response.data;
 
       // 处理图片信息
@@ -182,7 +185,7 @@ function App() {
         // 优先从文章链接中提取图片
         if (item.link) {
           try {
-            const htmlResponse = await axios.get(`http://localhost:5050/proxy?url=${encodeURIComponent(item.link)}`);
+            const htmlResponse = await axios.get(`${API_BASE_URL}/proxy?url=${encodeURIComponent(item.link)}`);
             image = extractFirstImageFromHtml(htmlResponse.data);
           } catch (error) {
             console.error('获取文章内容失败:', error);
@@ -247,7 +250,7 @@ function App() {
     setSelectedRss(url);
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:5050/rss?url=${encodeURIComponent(url)}`);
+      const response = await axios.get(`${API_BASE_URL}/rss?url=${encodeURIComponent(url)}`);
       setFeed(response.data);
     } catch (error) {
       alert('无法获取RSS源');
