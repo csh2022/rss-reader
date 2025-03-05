@@ -330,17 +330,6 @@ function App() {
             </div>
           </div>
         )}
-
-
-
-
-
-
-
-
-
-
-
         <div className="rss-list">
           {rssList.map((url) => (
             <div key={url} className={`rss-item ${selectedRss === url ? 'active' : ''}`}>
