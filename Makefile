@@ -3,7 +3,7 @@ build-backend:
 	cd backend && go build -o output/rss-reader main.go
 
 .PHONY: run-backend
-run-backend: build-backend
+run-backend:
 	./backend/output/rss-reader
 
 .PHONY: install-frontend

@@ -30,26 +30,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN update-ca-certificates
 
-USER ${USER_NAME}
-
-RUN sh -c "$(curl --insecure -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \
-    && git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions \
-    && sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions)/g' ~/.zshrc \
-    && echo "set nu" >> ~/.vimrc \
-    && sudo chsh -s /bin/zsh ${USER_NAME}
-
 RUN GO_VERSION=1.23.4 \
     && ARCH=$(dpkg --print-architecture) \
     && sudo wget https://go.dev/dl/go${GO_VERSION}.linux-${ARCH}.tar.gz \
     && sudo rm -rf /usr/local/go \
     && sudo tar -C /usr/local -xzf go${GO_VERSION}.linux-${ARCH}.tar.gz \
     && sudo rm go${GO_VERSION}.linux-${ARCH}.tar.gz \
-    && echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.zshrc
+    && echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
 
 COPY . /rss-reader
 WORKDIR /rss-reader
 
-SHELL ["/bin/zsh", "-c"]
-RUN source ~/.zshrc && make build-backend install-frontend
+SHELL ["/bin/bash", "-c"]
+RUN source ~/.bashrc && make build-backend install-frontend
 
-CMD [ "bash", "-c", "./hack/run.sh" ]
+CMD [ "bash", "-c", "hack/run.sh" ]
+
