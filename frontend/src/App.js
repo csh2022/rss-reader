@@ -396,6 +396,17 @@ function App() {
                   <div className="feed-item-content">
                     <div className="feed-item-source">{feed.title}</div>
                     <h3 className="feed-item-title">{item.title}</h3>
+                    {/* 动态显示发布时间 */}
+                    {item.published && (
+                      <div className="feed-item-time">
+                        {console.log('published:', item.published)} {/* 打印 published */}
+                        {new Date(item.published).toLocaleDateString('zh-CN', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                        })}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

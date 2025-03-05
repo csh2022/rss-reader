@@ -514,6 +514,14 @@ body {
   color: #666;
   font-size: 12px;
   border-radius: 8px;
+
+  .feed-item-time {
+    font-size: 12px;
+    color: #666;
+    margin-top: 8px;
+    font-style: italic;
+    display: block;
+  }
 }
 
 .image-loading .loading-spinner {
