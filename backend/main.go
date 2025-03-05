@@ -63,12 +63,21 @@ func proxyHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// 启动时加载 RSS 列表
+	links, err := rss.LoadRSSLinks()
+	if err != nil {
+		log.Printf("启动时加载 RSS 列表失败: %v\n", err)
+	} else {
+		rssList = links
+		log.Printf("启动时加载的 RSS 列表: %v\n", rssList)
+	}
+
 	r := mux.NewRouter()
 	r.HandleFunc("/rss", getRSSFeed).Methods("GET")
 	r.HandleFunc("/rss/list", listRSS).Methods("GET")
 	r.HandleFunc("/rss/add", addRSS).Methods("POST")
 	r.HandleFunc("/rss/remove", removeRSS).Methods("DELETE")
-	r.HandleFunc("/proxy", proxyHandler).Methods("GET") // 添加代理路由
+	r.HandleFunc("/proxy", proxyHandler).Methods("GET")
 	r.Use(mux.CORSMethodMiddleware(r))
 
 	handler := cors.New(cors.Options{
@@ -243,6 +252,8 @@ func removeRSS(w http.ResponseWriter, r *http.Request) {
 
 	mu.Lock()
 	defer mu.Unlock()
+
+	// 从内存列表中删除
 	for i, u := range rssList {
 		if u == url {
 			rssList = append(rssList[:i], rssList[i+1:]...)
@@ -250,5 +261,13 @@ func removeRSS(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
+
+	// 更新文件
+	if err := rss.RemoveRSSLink(url); err != nil {
+		log.Printf("更新文件失败: %v\n", err)
+		http.Error(w, "更新文件失败", http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusNoContent)
 }

@@ -74,14 +74,14 @@ func SaveRSSLink(url string) error {
 }
 
 func RemoveRSSLink(url string) error {
-	mtx.Lock()
-	defer mtx.Unlock()
-
 	// 加载现有链接
 	links, err := LoadRSSLinks()
 	if err != nil {
 		return err
 	}
+
+	mtx.Lock()
+	defer mtx.Unlock()
 
 	// 过滤掉要删除的链接
 	newLinks := []string{}

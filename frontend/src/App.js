@@ -3,15 +3,6 @@ import './App.css';
 import React, { useState, useEffect, useRef } from 'react'; // Add useEffect import
 import axios from 'axios';
 
-
-
-
-
-
-
-
-
-
 function App() {
   const [rssList, setRssList] = useState([]);
   const [newRssUrl, setNewRssUrl] = useState('');
