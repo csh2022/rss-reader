@@ -81,7 +81,7 @@ func main() {
 	r.Use(mux.CORSMethodMiddleware(r))
 
 	handler := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:3001", "http://43.128.84.8:3001", "http://127.0.0.1:62720"},
+		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type"},
 		AllowCredentials: true,

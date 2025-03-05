@@ -12,7 +12,7 @@ install-frontend:
 
 .PHONY: start-frontend
 start-frontend:
-	cd frontend && npm start -- --host 0.0.0.0
+	cd frontend && HOST=0.0.0.0 npm start
 
 .PHONY: build-dev-docker
 build-dev-docker:
