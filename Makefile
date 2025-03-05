@@ -4,7 +4,7 @@ build-backend:
 
 .PHONY: run-backend
 run-backend:
-	./backend/output/rss-reader
+	./backend/output/rss-reader > log 2>&1
 
 .PHONY: install-frontend
 install-frontend:
