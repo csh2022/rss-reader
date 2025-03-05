@@ -1,0 +1,53 @@
+FROM debian:bullseye
+
+RUN cp /etc/apt/sources.list /etc/apt/sources.list.bak \
+    && sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    wget \
+    vim \
+    git \
+    ffmpeg \
+    xz-utils \
+    zsh \
+    build-essential \
+    unzip \
+    htop \
+    less \
+    tmux \
+    iputils-ping \
+    net-tools \
+    rsync \
+    cmake \
+    sudo \
+    openssh-client \
+    nodejs \
+    npm \
+    ca-certificates \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN update-ca-certificates
+
+ARG USER_NAME=rss-reader
+
+RUN useradd --create-home --uid 1000 --shell /bin/zsh ${USER_NAME} \
+    && usermod -aG sudo ${USER_NAME} \
+    && echo "${USER_NAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+USER ${USER_NAME}
+
+RUN sh -c "$(curl --insecure -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended \
+    && git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions \
+    && sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions)/g' ~/.zshrc \
+    && echo "set nu" >> ~/.vimrc \
+    && sudo chsh -s /bin/zsh rss-reader
+
+RUN GO_VERSION=1.23.4 \
+    && ARCH=$(dpkg --print-architecture) \
+    && sudo wget https://go.dev/dl/go${GO_VERSION}.linux-${ARCH}.tar.gz \
+    && sudo rm -rf /usr/local/go \
+    && sudo tar -C /usr/local -xzf go${GO_VERSION}.linux-${ARCH}.tar.gz \
+    && sudo rm go${GO_VERSION}.linux-${ARCH}.tar.gz \
+    && echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.zshrc

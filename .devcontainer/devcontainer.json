@@ -1,0 +1,11 @@
+{
+    "name": "rss-reader-dev",
+    "image": "rss-reader-dev:latest",
+    "workspaceFolder": "/workspaces/rss-reader",
+    "runArgs": [
+        "-p",
+        "5050:5050",
+        "-p",
+        "3001:3001"
+    ]
+}
