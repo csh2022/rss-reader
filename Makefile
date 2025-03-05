@@ -3,8 +3,8 @@ build-backend:
 	cd backend && go build -o output/rss-reader main.go
 
 .PHONY: run-backend
-run-backend:
-	cd backend && go run main.go
+run-backend: build-backend
+	./backend/output/rss-reader
 
 .PHONY: install-frontend
 install-frontend:
@@ -12,7 +12,7 @@ install-frontend:
 
 .PHONY: start-frontend
 start-frontend:
-	cd frontend && npm start
+	cd frontend && npm start -- --host 0.0.0.0
 
 .PHONY: build-dev-docker
 build-dev-docker:
